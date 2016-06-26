@@ -8,15 +8,35 @@
 
 import UIKit
 import CoreData
+import MMDrawerController
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
-
+    
+    /// サイドバーの開閉をCenterView / LeftDrawerViewから利用するために宣言
+    var centerContainer: MMDrawerController?
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        // MMDrawerに対応したViewControllerの生成
+        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let centerViewController = mainStoryboard.instantiateViewControllerWithIdentifier("MainView")
+        let leftViewController = mainStoryboard.instantiateViewControllerWithIdentifier("LeftDrawer") as! LeftDrawerViewController
+            
+        let leftSideNav = UINavigationController(rootViewController: leftViewController)
+        let centerNav = UINavigationController(rootViewController: centerViewController)
+            
+        centerContainer = MMDrawerController(centerViewController: centerNav, leftDrawerViewController: leftSideNav,rightDrawerViewController:nil)
+        //オープン方法のモード指定
+        centerContainer!.openDrawerGestureModeMask = MMOpenDrawerGestureMode.All
+            
+        //クローズ方法のモード指定
+        centerContainer!.closeDrawerGestureModeMask = MMCloseDrawerGestureMode.All
+            
+        window!.rootViewController = centerContainer
+        window!.makeKeyAndVisible()
+            
         return true
     }
 
